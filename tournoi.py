@@ -2,7 +2,9 @@
 
 from joueur import Joueur
 from match import Match
-import utils
+from utils import lire_csv
+from utils import sauvegarder_json
+from utils import ecrire_texte
 
 class Tournoi:
     def __init__(self, nom):
@@ -15,24 +17,21 @@ class Tournoi:
         self.matchs = []
 
     def charger_joueurs(self, chemin_csv):
-        """
-        Lire un fichier CSV contenant les joueurs.
-        Chaque ligne contient un pseudonyme.
-        Pour chaque ligne, créer un objet Joueur et l'ajouter à la liste des joueurs.
-        Utiliser la fonction lire_csv() du fichier utils.py.
-        """
-        pass
+        lignes = lire_csv(chemin_csv)
+        for element in lignes:
+            pseudo = element[0]
+            joueur = Joueur(pseudo)
+            self.joueurs.append(joueur)
+
+
 
     def charger_matchs(self, chemin_csv):
-        """
-        Lire un fichier CSV contenant les matchs.
-        Chaque ligne contient deux pseudos de joueurs (joueur1, joueur2).
-        Trouver les objets Joueur correspondants dans la liste de joueurs.
-        Pour chaque ligne, créer un objet Match et l'ajouter à la liste des matchs.
-        Utiliser la fonction lire_csv() du fichier utils.py.
-        """
-        pass
-        
+        lignes = lire_csv(chemin_csv)
+        for element1, element2 in lignes:
+            joueur1 = element1[0]
+            joueur2 = element2[0]
+            match = Match(joueur1, joueur2)
+
 
     def saisir_scores(self):
         """
@@ -72,14 +71,8 @@ class Tournoi:
             print(f"{joueur.pseudo} - Victoires : {joueur.victoires}")
 
     def sauvegarder(self, chemin_json):
-        """
-        Sauvegarder le tournoi dans un fichier JSON.
-        Le fichier doit contenir :
-        - le nom du tournoi
-        - la liste des joueurs (convertis en dictionnaires à l'aide de la fonction to_dict déjà implémenté dans la classe Joueur)
-        Utiliser la fonction sauvegarder_json() du fichier utils.py.
-        """
-        pass
+        tournoi = {"nom": self.nom, "joueur": [Joueur.to_dict() for element in self.joueurs]}
+        sauvegarder_json(tournoi, chemin_json)
 
     def generer_rapport(self, chemin_texte):
         """
